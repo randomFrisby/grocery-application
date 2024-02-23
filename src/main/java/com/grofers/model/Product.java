@@ -14,13 +14,15 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    @OneToMany
+    private String productName;
+
+    @ManyToOne
     private Supplier supplier;
 
-    @OneToMany
+    @ManyToOne
     private Category category;
 
-    private Integer quantity;
+    private Double price;
 
     private String brand;
 }

@@ -1,5 +1,5 @@
 package com.grofers.enums;
 
 public enum OrderStatus {
-    CONFIRMED, SHIPPED, DELIVERED
+    IN_CART, PLACED, SHIPPED, DELIVERED
 }

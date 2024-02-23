@@ -20,9 +20,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    private LocalDateTime orderedTime;
+    private LocalDateTime orderDate;
 
-    private LocalDateTime deliveredTime;
+    private LocalDateTime deliveryDate;
+
+    private Double totalAmount;
 
     @NotNull(message = "orderStatus is mandatory!")
     @Enumerated(EnumType.STRING)

@@ -1,6 +1,8 @@
 package com.grofers.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +18,10 @@ public class Supplier {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long supplierId;
 
-    private String location;
+    private String supplierName;
+
+    @Column(unique = true)
+    @NotNull(message = "email is mandatory")
+    @Email(message = "not correct email format")
+    private String contact;
 }
