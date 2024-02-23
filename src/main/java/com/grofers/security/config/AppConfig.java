@@ -4,14 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,38 +23,32 @@ public class AppConfig {
 		http.csrf(csrf -> csrf.disable())
 		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests(auth ->
-				auth.requestMatchers("/users/signup").permitAll()
-				.requestMatchers("/users/login").permitAll()
-				.requestMatchers(HttpMethod.GET,"/users/admin/all").hasRole("ADMIN")
-				.requestMatchers("/orders/**").permitAll()
+				auth.requestMatchers("/users/register").permitAll()
+				.requestMatchers("/users/auth/login").permitAll()
+				.requestMatchers("/orders/**").hasRole("CUSTOMER")
+				.requestMatchers(HttpMethod.GET,"/users/admin/**").hasRole("ADMIN")
 				.requestMatchers(HttpMethod.POST, "/supplier/**").hasRole("ADMIN")
 				.requestMatchers(HttpMethod.POST, "/category/**").hasRole("ADMIN")
-				.requestMatchers(HttpMethod.GET,"/customers/**").hasAnyRole("ADMIN","USER")
+				.requestMatchers(HttpMethod.GET,"/customers/**").hasAnyRole("ADMIN","CUSTOMER")
 				.anyRequest()
 				.authenticated()
 		).addFilterAfter(new JwtTokenGeneratorFilter(), BasicAuthenticationFilter.class)
-		.addFilterBefore(new JwtTokenValidatorFilter(), BasicAuthenticationFilter.class)
-		.formLogin(form -> form
-				.usernameParameter(SecurityContextHolder.getContext().getAuthentication().getName())
-				.passwordParameter(SecurityContextHolder.getContext().getAuthentication().getName())
-				.loginPage("/users/login")
-				.permitAll()
-		)
-		.httpBasic(Customizer.withDefaults());
+		.addFilterBefore(new JwtTokenValidatorFilter(), BasicAuthenticationFilter.class);
+//		.formLogin(form -> form
+//				.usernameParameter(SecurityContextHolder.getContext().getAuthentication().getName())
+//				.passwordParameter(SecurityContextHolder.getContext().getAuthentication().getName())
+//				.loginPage("/users/auth/login")
+//				.permitAll()
+//		)
+//		.httpBasic(Customizer.withDefaults());
 
 		return http.build();
 
 	}
 
 	@Bean
-	public AuthenticationManager authenticationManager(
-			UserDetailsService userDetailsService,
-			PasswordEncoder passwordEncoder) {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userDetailsService);
-		authenticationProvider.setPasswordEncoder(passwordEncoder);
-
-		return new ProviderManager(authenticationProvider);
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+		return configuration.getAuthenticationManager();
 	}
 
 	@Bean

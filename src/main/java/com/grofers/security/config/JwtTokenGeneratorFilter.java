@@ -45,9 +45,9 @@ public class JwtTokenGeneratorFilter extends OncePerRequestFilter {
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(new Date().getTime() + 30000000)) // expiration time of 8 hours
                     .signWith(key).compact();
-            
-         
-            
+
+
+            System.out.println("JWT TOKE -------- " + jwt);
             response.setHeader(SecurityConstants.JWT_HEADER, jwt);
  
                    
@@ -79,7 +79,7 @@ public class JwtTokenGeneratorFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 	
-        return !request.getServletPath().equals("/users/login");
+        return !request.getServletPath().equals("/users/auth/login");
 	}
 	
 

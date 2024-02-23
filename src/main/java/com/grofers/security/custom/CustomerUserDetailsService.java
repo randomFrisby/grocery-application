@@ -30,7 +30,7 @@ public class CustomerUserDetailsService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
 		
-		Optional<com.grofers.model.User> opt= userRepository.findByUsername(username);
+		Optional<com.grofers.model.User> opt= userRepository.findByEmail(username);
 
 		if(opt.isPresent()) {
 			
